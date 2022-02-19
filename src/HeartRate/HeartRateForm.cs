@@ -36,6 +36,7 @@ public partial class HeartRateForm : Form
     private LogFile _log;
     private IBIFile _ibi;
     private HeartRateFile _hrfile;
+    private OscOutput _oscOutput;
     private HeartRateSettings _lastSettings;
 
     private string _iconText;
@@ -150,6 +151,7 @@ public partial class HeartRateForm : Form
         _log?.Reading(reading);
         _ibi?.Reading(reading);
         _hrfile?.Reading(reading);
+        _oscOutput?.Reading(reading);
 
         var bpm = reading.BeatsPerMinute;
         var status = reading.Status;
@@ -335,6 +337,7 @@ public partial class HeartRateForm : Form
                 _measurementFont.TryDispose();
                 _iconStringFormat.TryDispose();
                 _watchdog.TryDispose();
+                _oscOutput.TryDispose();
             }
         }
 
@@ -403,6 +406,7 @@ public partial class HeartRateForm : Form
         _log = new LogFile(_settings, FormatFilename(_settings.LogFile));
         _ibi = new IBIFile(FormatFilename(_settings.IBIFile));
         _hrfile = new HeartRateFile(FormatFilename(_settings.HeartRateFile));
+        _oscOutput = new OscOutput(_settings.OscAddress, _settings.OscPort, _settings.OscPath);
     }
 
     private string FormatFilename(string inputFilename)

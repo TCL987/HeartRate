@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Net;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 
@@ -43,6 +44,9 @@ public class HeartRateSettings
     public string LogFile;
     public string IBIFile;
     public string HeartRateFile;
+    public IPAddress OscAddress;
+    public int? OscPort;
+    public string OscPath;
 
     public HeartRateSettings(string filename)
     {
@@ -120,6 +124,13 @@ public class HeartRateSettings
         LogFile = protocol.LogFile;
         IBIFile = protocol.IBIFile;
         HeartRateFile = protocol.HeartRateFile;
+        if(!IPAddress.TryParse(protocol.OscAddress, out OscAddress))
+        {
+            OscAddress = null;
+        }
+
+        OscPort = protocol.OscPort;
+        OscPath = protocol.OscPath;
 
         // A hack fix from a bug that's been fixed.
         if (UITextAlignment == 0) UITextAlignment = ContentAlignment.MiddleCenter;
@@ -255,6 +266,10 @@ public class HeartRateSettingsProtocol
     public string LogFile { get; set; }
     public string IBIFile { get; set; }
     public string HeartRateFile { get; set; }
+    
+    public string OscAddress { get; set; }
+    public int OscPort { get; set; }
+    public string OscPath { get; set; }
     // ReSharper restore AutoPropertyCanBeMadeGetOnly.Global
 
     // Required by deserializer.
@@ -289,6 +304,9 @@ public class HeartRateSettingsProtocol
         LogFile = settings.LogFile ?? " ";
         IBIFile = settings.IBIFile ?? " ";
         HeartRateFile = settings.HeartRateFile ?? " ";
+        OscAddress = settings.OscAddress?.ToString() ?? "127.0.0.1";
+        OscPort = settings.OscPort ?? 9000;
+        OscPath = settings.OscPath ?? "/avatars/parameters/HeartRate";
     }
 
     private static string ColorToString(Color color)
